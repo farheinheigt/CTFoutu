@@ -4,7 +4,7 @@
 
 CTFoutu est un outil de recherche des vulnérabilités (CVE) et des exploits associés. Cet outil permet de rechercher facilement les CVEs à partir de la base de données officielle du NVD (National Vulnerability Database) et d'afficher les exploits correspondants présents dans une base de données locale.
 
-<a href="https://asciinema.org/a/5vdM2VuS7d4I6pFIpQuE5R9v5" target="_blank"><img src="https://asciinema.org/a/5vdM2VuS7d4I6pFIpQuE5R9v5.svg" /></a>
+<script src="https://asciinema.org/a/5vdM2VuS7d4I6pFIpQuE5R9v5.js" id="asciicast-5vdM2VuS7d4I6pFIpQuE5R9v5" async="true"></script>
 
 ## Fonctionnalités
 
