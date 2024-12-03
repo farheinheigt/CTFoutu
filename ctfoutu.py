@@ -15,6 +15,7 @@ from datetime import datetime
 header = {"User-Agent": "Mozilla/5.0", "X-Requested-With": "XMLHttpRequest"}
 console = Console()
 
+
 def rechercher_cves_et_exploits(arg):
     # Recherche des CVEs correspondant à une chaîne de caractères donnée via l'API NVD
     console.print(f"[bold yellow]Recherche des derniers CVEs liés à '{arg}'[/bold yellow]")
@@ -59,8 +60,21 @@ def rechercher_cves_et_exploits(arg):
 
     # Recherche des exploits correspondant à une chaîne de caractères donnée dans la base de données locale
     console.print(f"[bold yellow]Recherche des exploits liés à '{arg}'[/bold yellow]")
+    fichier_exploits = "./files_exploits.csv"
     try:
-        fichier_exploits = "./files_exploits.csv"
+        # Télécharger le fichier exploits si nécessaire
+        if not os.path.exists(fichier_exploits):
+            url_exploits = "https://gitlab.com/exploit-database/exploitdb/-/raw/main/files_exploits.csv"
+            console.print(f"[bold yellow]Téléchargement du fichier des exploits depuis {url_exploits}...[/bold yellow]")
+            reponse_exploits = requests.get(url_exploits)
+            if reponse_exploits.status_code == 200:
+                with open(fichier_exploits, "wb") as f:
+                    f.write(reponse_exploits.content)
+                console.print(f"[bold green]Fichier des exploits téléchargé avec succès[/bold green]")
+            else:
+                console.print(f"[bold red]Erreur : Impossible de télécharger le fichier des exploits (statut {reponse_exploits.status_code})[/bold red]")
+                return
+
         tableau = Table(title=f"Résultats de la recherche pour les exploits : {arg}")
         tableau.add_column("EDB", style="bold red")
         tableau.add_column("Langage", style="bold")
@@ -85,6 +99,9 @@ def rechercher_cves_et_exploits(arg):
         # Supprimer le fichier local après utilisation
         if os.path.exists(fichier_exploits):
             os.remove(fichier_exploits)
+            console.print(f"[bold green]Fichier des exploits supprimé après utilisation[/bold green]")
+
+
 
 def afficher_resultats_recherche(resultats, titre):
     # Affiche les résultats de la recherche dans un tableau bien formaté
