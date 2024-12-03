@@ -4,13 +4,21 @@
 
 CTFoutu est un outil de recherche des vulnérabilités (CVE) et des exploits associés. Cet outil permet de rechercher facilement les CVEs à partir de la base de données officielle du NVD (National Vulnerability Database) et d'afficher les exploits correspondants présents dans une base de données locale.
 
-## Prérequis
+## Fonctionnalités
 
-- Python 3.13 ou supérieur
-- Bibliothèques Python : `requests`, `rich`
+- Recherche des CVEs via l'API de la NVD.
+- Affichage des scores CVSS avec une mise en évidence en couleur en fonction de la gravité.
+- Recherche des exploits à partir d'une base de données locale (fichier `files_exploits.csv`, provenant de [ExploitDB sur GitLab](https://gitlab.com/exploit-database/exploitdb)).
+- Prise en charge de l'entrée via un argument ou un pipe pour une utilisation flexible.
+- Sauvegarde des résultats de recherche au format Markdown et JSON dans le répertoire courant.
 
 ## Installation
 
+### Prérequis
+
+- Python 3.13 ou supérieur
+- Bibliothèques Python : `requests`, `rich`
+  
 1. Clone ce dépôt sur ta machine :
    ```bash
    git clone https://github.com/farheinheigt/CTFoutu.git
@@ -91,22 +99,10 @@ L'outil affichera deux tableaux :
    - **Date de publication** : Date à laquelle l'exploit a été publié
    - **Mise à jour** : Date de la dernière mise à jour de l'exploit
 
-## Fonctionnalités
-
-- Recherche des CVEs via l'API de la NVD.
-- Affichage des scores CVSS avec une mise en évidence en couleur en fonction de la gravité.
-- Recherche des exploits à partir d'une base de données locale (fichier `files_exploits.csv`, provenant de [ExploitDB sur GitLab](https://gitlab.com/exploit-database/exploitdb)).
-- Prise en charge de l'entrée via un argument ou un pipe pour une utilisation flexible.
-- Sauvegarde des résultats de recherche au format Markdown et JSON dans le répertoire courant.
-
-## Remarque
-
-- Assure-toi que le fichier `files_exploits.csv` est téléchargé automatiquement lors de la première exécution du script. Ce fichier est temporaire et sera supprimé après chaque utilisation.
-- Tu peux configurer la durée de pause pour les tentatives en cas d'erreur de connexion dans le code (par défaut 5 secondes).
-
 ## Structure du Projet
 
 - **ctfoutu.py** : Le script principal permettant de faire les recherches.
+- **config.py** : Module permettant la configuration de la clé API pour accéder à la base de données NVD.
 - **files\_exploits.csv** : Fichier contenant la base de données des exploits utilisée pour la recherche. Ce fichier est téléchargé temporairement.
 - **requirements.txt** : Liste des dépendances nécessaires pour faire fonctionner le script.
 
