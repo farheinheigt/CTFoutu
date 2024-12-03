@@ -6,35 +6,68 @@ CTFoutu est un outil de recherche des vulnérabilités (CVE) et des exploits ass
 
 ## Prérequis
 
-- Python 3
+- Python 3.13 ou supérieur
 - Bibliothèques Python : `requests`, `rich`
-
-Pour installer ces bibliothèques, vous pouvez exécuter la commande suivante :
-
-```bash
-pip install requests rich
-```
 
 ## Installation
 
-1. Clonez ce dépôt sur votre machine :
+1. Clone ce dépôt sur ta machine :
    ```bash
-   git clone <url-du-repo>
+   git clone https://github.com/farheinheigt/CTFoutu.git
    ```
-2. Accédez au répertoire du projet :
+2. Accède au répertoire du projet :
    ```bash
    cd CTFoutu
    ```
+3. Crée un environnement virtuel avec `pipenv` sans l'activer manuellement :
+   ```bash
+   pipenv install -r requirements.txt
+   pipenv run ./ctfoutu.py "apache"
+   ```
+4. (Optionnel) Crée un lien symbolique ou un alias pour faciliter l'appel du programme :
+   - Pour créer un alias :
+     ```bash
+     alias ctfoutu="pipenv run python ctfoutu.py"
+     ```
+   - Pour créer un lien symbolique :
+     ```bash
+     ln -s $(pwd)/ctfoutu.py /usr/local/bin/ctfoutu
+     ```
 
 ## Utilisation
 
-Pour utiliser CTFoutu, exécutez le script avec un terme de recherche en argument. Ce terme peut être un mot-clé comme le nom d'un produit ou d'une technologie.
+Pour utiliser CTFoutu, exécute le script avec un terme de recherche en argument ou passe le terme de recherche via un pipe. Ce terme peut être un mot-clé comme le nom d'un produit ou d'une technologie.
+
+### Utilisation avec un argument
 
 ```bash
 ./ctfoutu.py "apache"
 ```
 
+### Utilisation avec un pipe
+
+```bash
+echo "apache" | ./ctfoutu.py
+```
+
 L'outil affichera alors les CVEs et les exploits liés à "apache".
+
+### Configurer la clé API
+
+Pour configurer la clé API nécessaire à l'accès aux informations du NVD, utilise l'argument `--conf` :
+
+```bash
+./ctfoutu.py --conf
+```
+
+### Afficher l'aide
+
+Pour afficher l'aide et la liste des options disponibles :
+
+```bash
+./ctfoutu.py --help
+```
+
 
 ### Exemple de sortie
 
@@ -62,27 +95,29 @@ L'outil affichera deux tableaux :
 
 - Recherche des CVEs via l'API de la NVD.
 - Affichage des scores CVSS avec une mise en évidence en couleur en fonction de la gravité.
-- Recherche des exploits à partir d'une base de données locale (fichier `files_exploits.csv`).
+- Recherche des exploits à partir d'une base de données locale (fichier `files_exploits.csv`, provenant de [ExploitDB sur GitLab](https://gitlab.com/exploit-database/exploitdb)).
+- Prise en charge de l'entrée via un argument ou un pipe pour une utilisation flexible.
+- Sauvegarde des résultats de recherche au format Markdown et JSON dans le répertoire courant.
 
 ## Remarque
 
-- Assurez-vous que le fichier `files_exploits.csv` est correctement téléchargé et placé dans le répertoire `~/.local/share/CTFoutu/` afin de permettre la recherche des exploits.
-- Vous pouvez configurer la durée de pause pour les tentatives en cas d'erreur de connexion dans le code (par défaut 5 secondes).
+- Assure-toi que le fichier `files_exploits.csv` est téléchargé automatiquement lors de la première exécution du script. Ce fichier est temporaire et sera supprimé après chaque utilisation.
+- Tu peux configurer la durée de pause pour les tentatives en cas d'erreur de connexion dans le code (par défaut 5 secondes).
 
 ## Structure du Projet
 
 - **ctfoutu.py** : Le script principal permettant de faire les recherches.
-- **files\_exploits.csv** : Fichier contenant la base de données des exploits utilisée pour la recherche.
+- **files\_exploits.csv** : Fichier contenant la base de données des exploits utilisée pour la recherche. Ce fichier est téléchargé temporairement.
+- **requirements.txt** : Liste des dépendances nécessaires pour faire fonctionner le script.
 
 ## Contributions
 
-Les contributions sont les bienvenues. N'hésitez pas à proposer des correctifs ou de nouvelles fonctionnalités via des pull requests.
+Les contributions sont les bienvenues. N'hésite pas à proposer des correctifs ou de nouvelles fonctionnalités via des pull requests.
 
 ## Licence
 
-Ce projet est distribué sous licence MIT. Consultez le fichier `LICENSE` pour plus de détails.
+Ce projet est distribué sous licence MIT. Consulte le fichier `LICENSE` pour plus de détails.
 
 ## Aide et Support
 
-Si vous rencontrez des problèmes ou avez des questions concernant l'utilisation de cet outil, vous pouvez ouvrir une *issue* sur le dépôt GitHub.
-
+Si tu rencontres des problèmes ou as des questions concernant l'utilisation de cet outil, tu peux ouvrir une *issue* sur le dépôt GitHub.
