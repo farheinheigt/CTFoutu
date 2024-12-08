@@ -24,6 +24,7 @@ env.bak/
 # Fichiers spécifiques à ce projet
 *.html  # Les fichiers HTML temporaires générés
 analysis_bruteforce.md
+config.json
 
 # Fichiers spécifiques aux outils utilisés
 ollama_cache/
