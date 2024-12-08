@@ -1,0 +1,59 @@
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Configurations locales
+*.env
+*.venv
+env/
+venv/
+ENV/
+env.bak/
+.venv.bak/
+
+# Fichiers d'analyse ou temporaires
+/tmp/
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+
+# Fichiers spécifiques à ce projet
+*.html  # Les fichiers HTML temporaires générés
+analysis_bruteforce.md
+
+# Fichiers spécifiques aux outils utilisés
+ollama_cache/
+*.ollama
+mods_cache/
+
+# Dossiers et fichiers spécifiques à Python
+Pipfile
+Pipfile.lock
+poetry.lock
+.pytest_cache/
+
+# Fichiers spécifiques à macOS
+.DS_Store
+
+# Fichiers spécifiques aux IDE
+.idea/
+.vscode/
+*.iml
+
+# Fichiers de tests et de logs
+tests/__pycache__/
+logs/
+coverage/
+*.coverage
+nosetests.xml
+coverage.xml
+
+# Fichiers générés par pyperclip
+clipboard_backup.txt
+
+# Autres fichiers générés
+debug_prompt.txt
