@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-import re
 import requests
 import sys
 import time
 import os
 import json
 import argparse
-from pathlib import Path
+import sys
+import subprocess
+
 from rich.console import Console
 from rich.table import Table
 from datetime import datetime
@@ -16,7 +17,20 @@ from config import obtenir_ou_configurer_cle_api, charger_configuration
 
 # Variables globales
 header = {"User-Agent": "Mozilla/5.0", "X-Requested-With": "XMLHttpRequest"}
+
 console = Console()
+
+
+# Vérifie si l'environnement virtuel est activé
+if not os.getenv("VIRTUAL_ENV"):
+    try:
+        # Localise le chemin du virtualenv
+        venv_path = subprocess.check_output(["pipenv", "--venv"], text=True).strip()
+        python_site_packages = os.path.join(venv_path, "lib", "python3.12", "site-packages")
+        sys.path.insert(0, python_site_packages)
+    except subprocess.CalledProcessError:
+        print("Erreur : Impossible de trouver l'environnement virtuel.")
+        sys.exit(1)
 
 def rechercher_cves_et_exploits(arg):
     # Recherche des CVEs correspondant à une chaîne de caractères donnée via l'API NVD
