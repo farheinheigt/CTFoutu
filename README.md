@@ -1,120 +1,197 @@
 # CTFoutu
 
-## Description
-
-CTFoutu est un outil de recherche des vulnérabilités (CVE) et des exploits associés. Cet outil permet de rechercher facilement les CVEs à partir de la base de données officielle du NVD (National Vulnerability Database) et d'afficher les exploits correspondants présents dans une base de données locale.
+CTFoutu est un CLI pour rechercher rapidement des CVEs (NVD) et des exploits associés (ExploitDB).
 
 <img src="demo.gif" alt="Démo de CTFoutu" />
 
 ## Fonctionnalités
 
-- Recherche des CVEs via l'API de la NVD.
-- Affichage des scores CVSS avec une mise en évidence en couleur en fonction de la gravité.
-- Recherche des exploits à partir d'une base de données locale (fichier `files_exploits.csv`, provenant de [ExploitDB sur GitLab](https://gitlab.com/exploit-database/exploitdb)).
-- Prise en charge de l'entrée via un argument ou un pipe pour une utilisation flexible.
-- Sauvegarde des résultats de recherche au format Markdown et JSON dans le répertoire courant.
+- Recherche de CVEs via l'API officielle NVD.
+- Affichage des scores CVSS avec couleur selon la sévérité.
+- Recherche d'exploits depuis la base ExploitDB (`files_exploits.csv`).
+- Entrée via argument ou via pipe.
+- Export des résultats en Markdown et JSON.
+
+## Prérequis
+
+- Python 3.10+
+- `uv` installé: <https://docs.astral.sh/uv/>
+
+### Prérequis shell (XDG / PATH)
+
+Pas obligatoire, mais recommandé pour un setup propre.
+
+- `uv` place les exécutables dans le dossier `XDG_BIN_HOME` si défini.
+- Sinon, `uv` utilise un dossier par défaut (souvent `~/bin`).
+
+Exemple recommandé:
+
+```bash
+export XDG_LOCAL_HOME="$HOME/.local"
+export XDG_BIN_HOME="$XDG_LOCAL_HOME/bin"
+export PATH="$XDG_BIN_HOME:$PATH"
+```
+
+Puis recharge ton shell (`exec zsh`).
 
 ## Installation
 
-### Prérequis
+### Option A: exécution dans le projet (`uv run`)
 
-- Python 3.13 ou supérieur
-- Bibliothèques Python : `requests`, `rich`
-  
-1. Clone ce dépôt sur ta machine :
-   ```bash
-   git clone https://github.com/farheinheigt/CTFoutu.git
-   ```
-2. Accède au répertoire du projet :
-   ```bash
-   cd CTFoutu
-   ```
-3. Crée un environnement virtuel avec `pipenv` sans l'activer manuellement :
-   ```bash
-   pipenv install -r requirements.txt
-   pipenv run ./ctfoutu.py "apache"
-   ```
-4. (Optionnel) Crée un lien symbolique ou un alias pour faciliter l'appel du programme :
-   - Pour créer un alias :
-     ```bash
-     alias ctfoutu="pipenv run python ctfoutu.py"
-     ```
-   - Pour créer un lien symbolique :
-     ```bash
-     ln -s $(pwd)/ctfoutu.py /usr/local/bin/ctfoutu
-     ```
+```bash
+git clone https://github.com/farheinheigt/CTFoutu.git
+cd CTFoutu
+uv sync
+```
+
+Exécuter le CLI dans l'environnement du projet:
+
+```bash
+uv run ctfoutu --help
+```
+
+### Option B: installation globale (sans alias)
+
+Depuis le dossier du projet:
+
+```bash
+uv tool install .
+ctfoutu --help
+```
+
+Si `ctfoutu` est introuvable après installation, vérifie ton `PATH`:
+
+```bash
+uv tool dir --bin
+```
+
+Ajoute ce dossier au `PATH` si nécessaire.
+
+## Désinstallation
+
+### Si tu utilises seulement le mode projet (`uv run`)
+
+Depuis le dossier du projet:
+
+```bash
+rm -rf .venv
+```
+
+Puis supprime le dossier du repo si tu n'en as plus besoin.
+
+### Si tu as installé l'outil globalement (`uv tool install .`)
+
+```bash
+uv tool uninstall ctfoutu
+```
+
+Optionnel: supprimer la configuration locale et les résultats exportés.
+
+```bash
+rm -f "${XDG_CONFIG_HOME:-$HOME/.config}/ctfoutu/config.json"
+rm -f resultats_cves.md resultats_cves.json resultats_exploits.md resultats_exploits.json
+```
+
+## Configuration de la clé API NVD
+
+CTFoutu nécessite une clé API NVD.
+
+Option 1 (recommandée): variable d'environnement.
+
+```bash
+export NVD_API_KEY="ta_cle_api"
+uv run ctfoutu "apache"
+```
+
+La variable `NVD_API_KEY` est prioritaire sur la clé stockée en local.
+
+Option 2: configuration interactive.
+
+```bash
+uv run ctfoutu --conf
+```
+
+Emplacement du fichier de config local:
+
+- macOS/Linux: `${XDG_CONFIG_HOME:-~/.config}/ctfoutu/config.json`
+- Windows: `%APPDATA%\\ctfoutu\\config.json`
+
+Surcharge possible via `CTFOUTU_CONFIG`.
+
+Exemple de config locale:
+
+```json
+{
+  "api_key": "NVD_API_KEY_HERE"
+}
+```
 
 ## Utilisation
 
-Pour utiliser CTFoutu, exécute le script avec un terme de recherche en argument ou passe le terme de recherche via un pipe. Ce terme peut être un mot-clé comme le nom d'un produit ou d'une technologie.
-
-### Utilisation avec un argument
+Recherche classique:
 
 ```bash
-./ctfoutu.py "apache"
+uv run ctfoutu "apache"
 ```
 
-### Utilisation avec un pipe
+Si tu as installé l'outil globalement:
 
 ```bash
-echo "apache" | ./ctfoutu.py
+ctfoutu "apache"
 ```
 
-L'outil affichera alors les CVEs et les exploits liés à "apache".
-
-### Configurer la clé API
-
-Pour configurer la clé API nécessaire à l'accès aux informations du NVD, utilise l'argument `--conf` :
+Recherche via pipe:
 
 ```bash
-./ctfoutu.py --conf
+echo "apache" | uv run ctfoutu
 ```
 
-### Afficher l'aide
+## Fichiers générés
 
-Pour afficher l'aide et la liste des options disponibles :
+Dans le dossier courant:
+
+- `resultats_cves.md`
+- `resultats_cves.json`
+- `resultats_exploits.md`
+- `resultats_exploits.json`
+
+## Développement
+
+Synchroniser les dépendances:
 
 ```bash
-./ctfoutu.py --help
+uv sync
 ```
 
-### Exemple de sortie
+Lancer le script directement (équivalent au binaire):
 
-L'outil affichera deux tableaux :
+```bash
+uv run python ctfoutu.py --help
+```
 
-1. **Tableau des CVEs** :
+## Notes de migration
 
-   - **CVE** : Identifiant du CVE
-   - **CVSS** : Score de gravité CVSS
-   - **Fournisseur** : Nom du fournisseur (si disponible)
-   - **Produit** : Nom du produit (si disponible)
-   - **Description** : Brève description du CVE
-   - **Mise à jour** : Date de publication
+Le projet n'utilise plus `pipenv`/`requirements.txt`.
+Le mode de gestion de dépendances est désormais standardisé sur `uv` + `pyproject.toml`.
 
-2. **Tableau des exploits** :
+## Dépannage
 
-   - **EDB** : Identifiant de l'exploit dans la base ExploitDB
-   - **Langage** : Langage de programmation de l'exploit
-   - **Description** : Description courte de l'exploit
-   - **Auteur** : Auteur de l'exploit
-   - **Date de publication** : Date à laquelle l'exploit a été publié
-   - **Mise à jour** : Date de la dernière mise à jour de l'exploit
+### Erreur NVD HTTP 404
 
-## Structure du Projet
+Sur l'API NVD, un `HTTP 404` peut indiquer une clé API invalide/expirée.
 
-- **ctfoutu.py** : Le script principal permettant de faire les recherches.
-- **config.py** : Module permettant la configuration de la clé API pour accéder à la base de données NVD.
-- **files\_exploits.csv** : Fichier contenant la base de données des exploits utilisée pour la recherche. Ce fichier est téléchargé temporairement.
-- **requirements.txt** : Liste des dépendances nécessaires pour faire fonctionner le script.
+- Vérifie d'abord si `NVD_API_KEY` est défini dans ton shell (elle écrase la clé locale).
+- Reconfigure la clé via `ctfoutu --conf` si besoin.
 
-## Contributions
+Vérification directe:
 
-Les contributions sont les bienvenues. N'hésite pas à proposer des correctifs ou de nouvelles fonctionnalités via des pull requests.
+```bash
+curl -i -H "apiKey: TA_CLE" "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=nginx&resultsPerPage=1"
+```
+
+- `200` : clé valide.
+- `404` : clé invalide ou rejetée.
 
 ## Licence
 
-Ce projet est distribué sous licence MIT. Consulte le fichier `LICENSE` pour plus de détails.
-
-## Aide et Support
-
-Si tu rencontres des problèmes ou as des questions concernant l'utilisation de cet outil, tu peux ouvrir une *issue* sur le dépôt GitHub.
+MIT
