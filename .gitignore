@@ -1,19 +1,20 @@
-# Fichiers Python compilés
+# Fichiers Python compiles
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 
-# Configurations locales
-*.env
-*.venv
+# Environnements virtuels
+.env
+.venv
+.venv/
 env/
 venv/
 ENV/
 env.bak/
 .venv.bak/
 
-# Fichiers d'analyse ou temporaires
+# Fichiers temporaires
 /tmp/
 *.tmp
 *.temp
@@ -21,31 +22,31 @@ env.bak/
 *.bak
 *.swp
 
-# Fichiers spécifiques à ce projet
-*.html  # Les fichiers HTML temporaires générés
-analysis_bruteforce.md
+# Fichiers generes par CTFoutu
+resultats_cves.md
+resultats_cves.json
+resultats_exploits.md
+resultats_exploits.json
+files_exploits.csv
+
+# Secrets et configuration locale
 config.json
 
-# Fichiers spécifiques aux outils utilisés
+# Caches outils
 ollama_cache/
 *.ollama
 mods_cache/
-
-# Dossiers et fichiers spécifiques à Python
-Pipfile
-Pipfile.lock
-poetry.lock
 .pytest_cache/
+dist/
+*.egg-info/
 
-# Fichiers spécifiques à macOS
+# OS / IDE
 .DS_Store
-
-# Fichiers spécifiques aux IDE
 .idea/
 .vscode/
 *.iml
 
-# Fichiers de tests et de logs
+# Coverage / logs tests
 tests/__pycache__/
 logs/
 coverage/
@@ -53,8 +54,8 @@ coverage/
 nosetests.xml
 coverage.xml
 
-# Fichiers générés par pyperclip
+# Autres fichiers generes
+analysis_bruteforce.md
+AUDIT.md
 clipboard_backup.txt
-
-# Autres fichiers générés
 debug_prompt.txt
