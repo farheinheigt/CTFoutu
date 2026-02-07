@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ctfoutu"
+version = "0.2.1"
+description = "CLI de recherche de CVEs NVD et d'exploits ExploitDB"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "farheinheigt" }
+]
+license = { text = "MIT" }
+dependencies = [
+  "requests>=2.32.0,<3.0.0",
+  "rich>=13.9.0,<14.0.0",
+  "yaspin>=3.0.2,<4.0.0"
+]
+
+[project.scripts]
+ctfoutu = "ctfoutu:main"
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+include = [
+  "ctfoutu.py",
+  "config.py",
+]
