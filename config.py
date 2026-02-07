@@ -1,22 +1,41 @@
 import json
 import os
 import webbrowser
-from cryptography.fernet import Fernet
+from pathlib import Path
 from rich.console import Console
 
-CONFIG_FILE = "config.json"
 console = Console()
 
+def _chemin_config() -> Path:
+    override = os.getenv("CTFOUTU_CONFIG")
+    if override:
+        return Path(override).expanduser()
+
+    if os.name == "nt":
+        base = Path(os.getenv("APPDATA", str(Path.home() / "AppData" / "Roaming")))
+    else:
+        base = Path(os.getenv("XDG_CONFIG_HOME", str(Path.home() / ".config")))
+    return base / "ctfoutu" / "config.json"
+
+
+CONFIG_FILE = _chemin_config()
+
+
 def charger_configuration():
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            config = json.load(f)
-            return config
+    if CONFIG_FILE.exists():
+        try:
+            with CONFIG_FILE.open("r", encoding="utf-8") as handle:
+                return json.load(handle)
+        except (OSError, json.JSONDecodeError) as exc:
+            console.print(f"[bold red]Impossible de lire la configuration :[/bold red] {exc}")
     return {}
 
+
 def sauvegarder_configuration(config):
-    with open(CONFIG_FILE, "w") as f:
-        json.dump(config, f, indent=4)
+    CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with CONFIG_FILE.open("w", encoding="utf-8") as handle:
+        json.dump(config, handle, indent=4, ensure_ascii=False)
+
 
 def obtenir_ou_configurer_cle_api():
     config = charger_configuration()
@@ -32,8 +51,11 @@ def obtenir_ou_configurer_cle_api():
 
     # Lancer directement le processus de configuration sans redemander
     console.print("[bold cyan]Je vais ouvrir la page pour générer une clé API dans ton navigateur...[/bold cyan]")
-    # Ouvrir la page pour générer une clé API
-    webbrowser.open("https://nvd.nist.gov/developers/request-an-api-key")
+    url_api = "https://nvd.nist.gov/developers/request-an-api-key"
+    try:
+        webbrowser.open(url_api)
+    except webbrowser.Error:
+        console.print(f"[bold yellow]Ouvre ce lien manuellement : {url_api}[/bold yellow]")
     
     api_key = console.input("[bold green]Entre ta clé API ici : [/bold green]").strip()
 
